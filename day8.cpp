@@ -26,18 +26,18 @@ struct datatype{
 int hazard = 0;
 datatype dota[10000000];
 long long RAM[32] = {0};
-int lock[34] = {0};
+int loc[34] = {0};
 long long lo, hi;
 int datanum = 0;
 
 int RHazard(int x) {
-	if (lock[x] == 1) hazard = 2;
+	if (loc[x] == 1) hazard = 2;
 	return 0;
 }
 
 int LHazard(int x) {
-	int m = lock[x];
-	lock[x] = 1;
+	int m = loc[x];
+	loc[x] = 1;
 	return m;
 }
 
@@ -265,7 +265,7 @@ class add {
 			if (type == 1) ans = RAM[s2] + RAM[s3]; else ans = RAM[s2] + s3;
 		}
 		void Write_Back() {
-			lock[s1] = h;
+			loc[s1] = h;
 			RAM[s1] = ans;
 		}
 };
@@ -318,7 +318,7 @@ class addu {
 			if (type == 1) ans = (unsigned int)(RAM[s2] + RAM[s3]); else ans = (unsigned int)(RAM[s2] + s3);
 		}
 		void Write_Back() {
-			lock[s1] = h;
+			loc[s1] = h;
 			RAM[s1] = ans;
 		}
 };
@@ -372,7 +372,7 @@ class sub {
 			if (type == 1) ans = RAM[s2] - RAM[s3]; else ans = RAM[s2] - s3;
 		}
 		void Write_Back() {
-			lock[s1] = h;
+			loc[s1] = h;
 			RAM[s1] = ans;
 		}
 };
@@ -426,7 +426,7 @@ class subu {
 			if (type == 1) ans = (unsigned int)(RAM[s2] - RAM[s3]); else ans = (unsigned int)(RAM[s2] - s3);
 		}
 		void Write_Back() {
-			lock[s1] = h;
+			loc[s1] = h;
 			RAM[s1] = ans;
 		}
 };
@@ -511,9 +511,9 @@ class mul {
 			}
 		}
 		void Write_Back() {
-			if (type == 3) {lock[32] = h1; lock[33] = h2;}
+			if (type == 3) {loc[32] = h1; loc[33] = h2;}
 			if (type == 1 || type == 2) {
-				RAM[s1] = ans;lock[s1] = h;
+				RAM[s1] = ans;loc[s1] = h;
 			}
 			else {lo = ll; hi = hh;}
 		}
@@ -599,9 +599,9 @@ class mulu {
 			}
 		}
 		void Write_Back() {
-			if (type == 3) {lock[32] = h1; lock[33] = h2;}
+			if (type == 3) {loc[32] = h1; loc[33] = h2;}
 			if (type == 1 || type == 2) {
-				RAM[s1] = ans;lock[s1] = h;
+				RAM[s1] = ans;loc[s1] = h;
 			}
 			else {lo = ll; hi = hh;}
 		}
@@ -686,9 +686,9 @@ class Div {
 			}
 		}
 		void Write_Back() {
-			if (type == 3) {lock[32] = h1; lock[33] = h2;}
+			if (type == 3) {loc[32] = h1; loc[33] = h2;}
 			if (type == 1 || type == 2) {
-				RAM[s1] = ans;lock[s1] = h;
+				RAM[s1] = ans;loc[s1] = h;
 			}
 			else {lo = ll; hi = hh;}
 		}
@@ -773,9 +773,9 @@ class Divu {
 			}
 		}
 		void Write_Back() {
-			if (type == 3) {lock[32] = h1; lock[33] = h2;}
+			if (type == 3) {loc[32] = h1; loc[33] = h2;}
 			if (type == 1 || type == 2) {
-				RAM[s1] = ans;lock[s1] = h;
+				RAM[s1] = ans;loc[s1] = h;
 			}
 			else {lo = ll; hi = hh;}
 		}
@@ -830,7 +830,7 @@ class Xor {
 			if (type == 1) ans = (RAM[s2] ^ RAM[s3]); else ans = (RAM[s2] ^ s3);
 		}
 		void Write_Back() {
-			lock[s1] = h;
+			loc[s1] = h;
 			RAM[s1] = ans;
 		}
 };
@@ -884,7 +884,7 @@ class Xoru {
 			if (type == 1) ans = (unsigned int)(RAM[s2] ^ RAM[s3]); else ans = (unsigned int)(RAM[s2] ^ s3);
 		}
 		void Write_Back() {
-			lock[s1] = h;
+			loc[s1] = h;
 			RAM[s1] = ans;
 		}
 };
@@ -919,7 +919,7 @@ class neg {
 			ans = (-1) * RAM[s2];
 		}
 		void Write_Back() {
-			lock[s1] = h;
+			loc[s1] = h;
 			RAM[s1] = ans;
 		}
 };
@@ -954,7 +954,7 @@ class negu {
 			ans = (-1) * RAM[s2];
 		}
 		void Write_Back() {
-			lock[s1] = h;
+			loc[s1] = h;
 			RAM[s1] = ans;
 		}
 };
@@ -1008,7 +1008,7 @@ class rem {
 			if (type == 1) ans = RAM[s2] % RAM[s3]; else ans = RAM[s2] % s3;
 		}
 		void Write_Back() {
-			lock[s1] = h;
+			loc[s1] = h;
 			RAM[s1] = ans;
 		}
 };
@@ -1062,7 +1062,7 @@ class remu {
 			if (type == 1) ans = (unsigned int)(RAM[s2] % RAM[s3]); else ans = (unsigned int)(RAM[s2] % s3);
 		}
 		void Write_Back() {
-			lock[s1] = h;
+			loc[s1] = h;
 			RAM[s1] = ans;
 		}
 };
@@ -1090,7 +1090,7 @@ class li {
 		}
 		void Execution() {}
 		void Write_Back() {
-			lock[s1] = h;
+			loc[s1] = h;
 			RAM[s1] = s2;
 		}
 };
@@ -1142,7 +1142,7 @@ class seq {
 		}
 		void Execution() {if (type == 1) ans = (RAM[s2] == RAM[s3]); else ans = (RAM[s2] == s3);}
 		void Write_Back() {
-			lock[s1] = h;
+			loc[s1] = h;
 			RAM[s1] = ans;
 		}
 };
@@ -1194,7 +1194,7 @@ class sge {
 		}
 		void Execution() {if (type == 1) ans = (RAM[s2] >= RAM[s3]); else ans = (RAM[s2] >= s3);}
 		void Write_Back() {
-			lock[s1] = h;
+			loc[s1] = h;
 			RAM[s1] = ans;
 		}
 };
@@ -1246,7 +1246,7 @@ class sgt {
 		}
 		void Execution() {if (type == 1) ans = (RAM[s2] > RAM[s3]); else ans = (RAM[s2] > s3);}
 		void Write_Back() {
-			lock[s1] = h;
+			loc[s1] = h;
 			RAM[s1] = ans;
 		}
 };
@@ -1298,7 +1298,7 @@ class sle {
 		}
 		void Execution() {if (type == 1) ans = (RAM[s2] <= RAM[s3]); else ans = (RAM[s2] <= s3);}
 		void Write_Back() {
-			lock[s1] = h;
+			loc[s1] = h;
 			RAM[s1] = ans;
 		}
 };
@@ -1350,7 +1350,7 @@ class slt {
 		}
 		void Execution() {if (type == 1) ans = (RAM[s2] < RAM[s3]); else ans = (RAM[s2] < s3);}
 		void Write_Back() {
-			lock[s1] = h;
+			loc[s1] = h;
 			RAM[s1] = ans;
 		}
 };
@@ -1402,7 +1402,7 @@ class sne {
 		}
 		void Execution() {if (type == 1) ans = (RAM[s2] != RAM[s3]); else ans = (RAM[s2] != s3);}
 		void Write_Back() {
-			lock[s1] = h;
+			loc[s1] = h;
 			RAM[s1] = ans;
 		}
 };
@@ -1973,7 +1973,7 @@ class la {
 			h = maxx(h, LHazard(s1));
 		}
 		void Execution() {if (type == 1) ans = RAM[s3] + s2; else ans = s2;}
-		void Write_Back() {lock[s1] = h;RAM[s1] = ans;}
+		void Write_Back() {loc[s1] = h;RAM[s1] = ans;}
 };
 
 class lb {
@@ -2018,7 +2018,7 @@ class lb {
 		}
 		void Execution() {if (type == 1) address = RAM[s3] + s2; else address = s2;}
 		void Memory_Access() {ans = int(dota[address].dstring);}
-		void Write_Back() {lock[s1] = h;RAM[s1] = ans;}
+		void Write_Back() {loc[s1] = h;RAM[s1] = ans;}
 };
 
 class lw {
@@ -2063,7 +2063,7 @@ class lw {
 		}
 		void Execution() {if (type == 1) address = RAM[s3] + s2; else address = s2;}
 		void Memory_Access() {ans = int(dota[address].dvalue);}
-		void Write_Back() {lock[s1] = h;RAM[s1] = ans;}
+		void Write_Back() {loc[s1] = h;RAM[s1] = ans;}
 };
 
 class sb {
@@ -2182,7 +2182,7 @@ class Move {
 			h = maxx(h, LHazard(s1));
 		}
 		void Execution() {ans = RAM[s2];}
-		void Write_Back() {lock[s1] = h;RAM[s1] = ans;}
+		void Write_Back() {loc[s1] = h;RAM[s1] = ans;}
 };
 
 class mfhi {
@@ -2203,7 +2203,7 @@ class mfhi {
 			h = maxx(h, LHazard(s1));
 		}
 		void Execution() {ans = hi;}
-		void Write_Back() {lock[s1] = h;RAM[s1] = ans;}
+		void Write_Back() {loc[s1] = h;RAM[s1] = ans;}
 };
 
 class mflo {
@@ -2224,7 +2224,7 @@ class mflo {
 			h = maxx(h, LHazard(s1));
 		}
 		void Execution() {ans = lo;}
-		void Write_Back() {lock[s1] = h;RAM[s1] = ans;}
+		void Write_Back() {loc[s1] = h;RAM[s1] = ans;}
 };
 
 class syscall {
@@ -2240,7 +2240,7 @@ class syscall {
 		void Execution() {}
 		void Memory_Access() {}
 		int Write_Back() {
-			if (RAM[2] == 5 || RAM[2] == 9) lock[2] = h;
+			if (RAM[2] == 5 || RAM[2] == 9) loc[2] = h;
 			switch (RAM[2]) {
 				case 1:cout <<RAM[4];break;
 				case 4:{
@@ -2424,7 +2424,7 @@ int main(int agrc, char * agrv[]) {
 				for (int ii = 0; ii <= 4; ++ii) {
 					status[ii] = 0; s[ii] = ""; name[ii] = 0;
 				}
-				for (int ii = 0; ii <= 33; ++ii) lock[ii] = 0;
+				for (int ii = 0; ii <= 33; ++ii) loc[ii] = 0;
 				if (hazard == 1) {
 					if (laststone == 1) j++;
 					laststone = 0;
