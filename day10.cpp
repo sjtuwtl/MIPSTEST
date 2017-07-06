@@ -9,9 +9,11 @@
 #include <fstream>
 
 using namespace std;
-ofstream fout("1.out");
+//ofstream fout("1.out");
 
 vector<string> str;
+vector<int> history[100];
+int SC[100][20] = {0};
 map<string, int> label;
 map<string, int> labeltodata;
 map<string, int> RAMmap;
@@ -25,7 +27,6 @@ struct datatype{
 };
 int jump;
 int hazard = 0;
-int SC[100] = {0};
 int bpc[5] = {0};
 int sum1 = 0, sum2 = 0;
 datatype dota[10000000];
@@ -45,14 +46,28 @@ int LHazard(int x) {
 	return m;
 }
 
-void Plus(int &x) {
-	x++;
-	if (x > 4) x = 4;
+void Plus(int x) {
+	if (history[x].size() <= 4) return;
+	else {
+		int temp = history[x][history[x].size() - 5] * 8 +
+				   history[x][history[x].size() - 4] * 4 +
+				   history[x][history[x].size() - 3] * 2 +
+				   history[x][history[x].size() - 2] * 1;
+		SC[x][temp]++;
+		if (SC[x][temp] >= 6) SC[x][temp] = 6;
+	}
 }
 
-void Minus(int &x) {
-	x--;
-	if (x < 1) x = 1;
+void Minus(int x) {
+	if (history[x].size() <= 4) return;
+	else {
+		int temp = history[x][history[x].size() - 5] * 8 +
+				   history[x][history[x].size() - 4] * 4 +
+				   history[x][history[x].size() - 3] * 2 +
+				   history[x][history[x].size() - 2] * 1;
+		SC[x][temp]--;
+		if (SC[x][temp] <= 1) SC[x][temp] = 1;
+	}
 }
 
 int maxx(int x, int y) {
@@ -1218,51 +1233,27 @@ class syscall {
 int status[5] = {0};
 string s[5];
 int name[5];
-add adddata[5];
-addu addudata[5];
-sub subdata[5];
-subu subudata[5];
-mul muldata[5];
-mulu muludata[5];
-Div Divdata[5];
-Divu Divudata[5];
-Xor Xordata[5];
-Xoru Xorudata[5];
-neg negdata[5];
-negu negudata[5];
-rem remdata[5];
-remu remudata[5];
+add adddata[5];addu addudata[5];
+sub subdata[5];subu subudata[5];
+mul muldata[5];mulu muludata[5];
+Div Divdata[5];Divu Divudata[5];
+Xor Xordata[5];Xoru Xorudata[5];
+neg negdata[5];negu negudata[5];
+rem remdata[5];remu remudata[5];
 li lidata[5];
-seq seqdata[5];
-sge sgedata[5];
-sgt sgtdata[5];
-sle sledata[5];
-slt sltdata[5];
-sne snedata[5];
+seq seqdata[5];sge sgedata[5];sgt sgtdata[5];
+sle sledata[5];slt sltdata[5];sne snedata[5];
 b bdata[5];
-beq beqdata[5];
-bne bnedata[5];
-bge bgedata[5];
-blt bltdata[5];
-ble bledata[5];
-bgt bgtdata[5];
-beqz beqzdata[5];
-bnez bnezdata[5];
-blez blezdata[5];
-bgez bgezdata[5];
-bgtz bgtzdata[5];
-bltz bltzdata[5];
+beq beqdata[5];bne bnedata[5];bge bgedata[5];
+blt bltdata[5];ble bledata[5];bgt bgtdata[5];
+beqz beqzdata[5];bnez bnezdata[5];blez blezdata[5];
+bgez bgezdata[5];bgtz bgtzdata[5];bltz bltzdata[5];
 j jdata[5];
 jr jrdata[5];
 jal jaldata[5];
-la ladata[5];
-lb lbdata[5];
-lw lwdata[5];
-sb sbdata[5];
-sw swdata[5];
-Move Movedata[5];
-mfhi mfhidata[5];
-mflo mflodata[5];
+la ladata[5];lb lbdata[5];lw lwdata[5];
+sb sbdata[5];sw swdata[5];
+Move Movedata[5];mfhi mfhidata[5];mflo mflodata[5];
 syscall syscalldata[5];
 
 void RAMready() {
@@ -1316,6 +1307,17 @@ string get_name(string s) {
 	for (int k = 0;k < s.size() &&  s[k] != ' ';++k) ss += s[k];
 	return ss;
 }
+bool check(int x) {
+	if (history[x].size() <= 3) return false;
+	else {
+		int temp = history[x][history[x].size() - 4] * 8 +
+				   history[x][history[x].size() - 3] * 4 +
+				   history[x][history[x].size() - 2] * 2 +
+				   history[x][history[x].size() - 1] * 1;
+		if (SC[x][temp] >= 4) return true;
+		else return false;
+	}
+}
 int main() {
 	//FILE * fp2 = fopen("3.in", "r");
 	RAMready();
@@ -1323,7 +1325,9 @@ int main() {
 	int j = init();
 	//fout <<l1 <<endl;
 	dealdata();
-	
+	for (int i = 1; i <= 80; i++)
+		for (int j = 1; j <=19; j++)
+			SC[i][j] = 3;
 	int i = 5 ,laststone = 0, mark, whetherjump = 0;
 	int branch[5] = {0}, origin[5] = {0}, whether[5] = {0};
 	while (true) {
@@ -1435,7 +1439,7 @@ int main() {
 				else if (bpc[t] == 1) {
 					sum2++;
 					branch[t] = jump;
-					if (SC[name[t]] == 3 || SC[name[t]] == 4) {
+					if (check(name[t])) {
 						whether[t] = 1;
 						origin[t] = j;
 						j = jump;
@@ -1498,21 +1502,22 @@ int main() {
 					case 46: syscalldata[t].Execution();break;
 				}
 				if (bpc[t] == 1) {
+					history[name[t]].push_back(f);
 					if (whether[t] == 1) {
-						if (f) {sum1++;Plus(SC[name[t]]);}
+						if (f) {sum1++;Plus(name[t]);}
 						else {
 							whetherjump = 1;
 							j = origin[t] - 1;
-							Minus(SC[name[t]]);
+							Minus(name[t]);
 							break;
 						}
 					}
 					else {
-						if (!f) {Minus(SC[name[t]]);sum1++;}
+						if (!f) {Minus(name[t]);sum1++;}
 						else {
 							whetherjump = 1;
 							j = branch[t];
-							Plus(SC[name[t]]);
+							Plus(name[t]);
 							break;
 						}
 					}
