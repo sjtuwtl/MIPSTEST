@@ -1276,8 +1276,8 @@ void RAMready() {
 	intmap["syscall"] = 46;
 }
 
-int init() {
-	FILE * fp1 = fopen("4.s", "r");
+int init(char * r) {
+	FILE * fp1 = fopen(r, "r");
 	char c[100];
 	linenum = 0;
 	while (fscanf(fp1 , "%[^\n]s" , &c) != EOF) {
@@ -1318,11 +1318,11 @@ bool check(int x) {
 		else return false;
 	}
 }
-int main() {
+int main(int agrc, char * agrv[]) {
 	//FILE * fp2 = fopen("3.in", "r");
 	RAMready();
 	beginset();
-	int j = init();
+	int j = init(agrv[1]);
 	//fout <<l1 <<endl;
 	dealdata();
 	for (int i = 1; i <= 80; i++)
